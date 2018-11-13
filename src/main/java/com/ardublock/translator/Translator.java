@@ -29,6 +29,7 @@ public class Translator
 
 	private Set<String> headerFileSet;
 	private Set<String> definitionSet;
+	private Set<String> defineBeforeSet;
 	private List<String> setupCommand;
 	private List<String> guinoCommand;
 	private Set<String> functionNameSet;
@@ -51,16 +52,27 @@ public class Translator
 	private boolean isScoopProgram;
 	private boolean isGuinoProgram;
 
+	private Set<RenderableBlock> loopCodeHookSet = new HashSet<RenderableBlock>();
+	
 	public Translator(Workspace ws)
 	{
 		workspace = ws;
 		reset();
 	}
 	
-	public String genreateHeaderCommand()
+	public String generateHeaderCommand()
 	{
 		StringBuilder headerCommand = new StringBuilder();
-		
+
+		if (!defineBeforeSet.isEmpty())
+		{
+			for (String function : defineBeforeSet)
+			{
+				headerCommand.append(function + "\n");
+			}
+			headerCommand.append("\n");
+		}		
+
 		if (!headerFileSet.isEmpty())
 		{
 			for (String file:headerFileSet)
@@ -162,6 +174,7 @@ public class Translator
 	{
 		headerFileSet = new LinkedHashSet<String>();
 		definitionSet = new LinkedHashSet<String>();
+		defineBeforeSet  = new LinkedHashSet<String>();
 		setupCommand = new LinkedList<String>();
 		guinoCommand = new LinkedList<String>();
 		functionNameSet = new HashSet<String>();
@@ -202,6 +215,11 @@ public class Translator
 		{
 			setupCommand.add(command);
 		}
+	}
+	
+	public void addDefinitionBefore(String function)
+	{
+		defineBeforeSet.add(function);
 	}
 	
 	public void addSetupCommandForced(String command)
@@ -423,7 +441,7 @@ public class Translator
 			code.append(translate(subroutineBlock.getBlockID()));
 		}
 		beforeGenerateHeader();
-		code.insert(0, genreateHeaderCommand());
+		code.insert(0, generateHeaderCommand());
 		
 		return code.toString();
 	}
@@ -437,4 +455,13 @@ public class Translator
 	{
 		internalData.put(name, value);
 	}
+
+	public void addLoopCodeHook(RenderableBlock renderableBlock) {
+		loopCodeHookSet.add(renderableBlock);		
+	}
+
+	public Set<RenderableBlock> getLoopCodeHooks() {		
+		return loopCodeHookSet;
+	}
+	
 }

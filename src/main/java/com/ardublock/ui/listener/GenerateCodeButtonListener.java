@@ -12,6 +12,8 @@ import javax.swing.JOptionPane;
 import com.ardublock.core.Context;
 import com.ardublock.translator.AutoFormat;
 import com.ardublock.translator.Translator;
+import com.ardublock.translator.block.TranslatorBlock;
+import com.ardublock.translator.block.TranslatorBlockFactory;
 import com.ardublock.translator.block.exception.BlockException;
 import com.ardublock.translator.block.exception.SocketNullException;
 import com.ardublock.translator.block.exception.SubroutineNameDuplicatedException;
@@ -40,6 +42,7 @@ public class GenerateCodeButtonListener implements ActionListener
 	{
 		boolean success;
 		success = true;
+		TranslatorBlockFactory translatorBlockFactory = new TranslatorBlockFactory();
 		Translator translator = new Translator(workspace);
 		translator.reset();
 		
@@ -143,6 +146,11 @@ public class GenerateCodeButtonListener implements ActionListener
 					scoopBlockSet.add(renderableBlock);
 				}
 				
+				TranslatorBlock tb = translatorBlockFactory.buildTranslatorBlock(translator, block.getBlockID(), block.getGenusName(), "", "", block.getBlockLabel());
+				if (tb.getNeedsInsertLoopCode()) {				
+					translator.addLoopCodeHook(renderableBlock);
+				}
+				
 			}
 		}
 		if (loopBlockSet.size() == 0) {
@@ -190,7 +198,7 @@ public class GenerateCodeButtonListener implements ActionListener
 			}
 			
 			translator.beforeGenerateHeader();
-			code.insert(0, translator.genreateHeaderCommand());
+			code.insert(0, translator.generateHeaderCommand());
 		}
 		catch (SocketNullException e1)
 		{

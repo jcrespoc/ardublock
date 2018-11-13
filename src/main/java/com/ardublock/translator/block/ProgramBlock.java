@@ -7,6 +7,9 @@ import com.ardublock.translator.Translator;
 import com.ardublock.translator.block.exception.SocketNullException;
 import com.ardublock.translator.block.exception.SubroutineNotDeclaredException;
 
+import edu.mit.blocks.codeblocks.Block;
+import edu.mit.blocks.renderable.RenderableBlock;
+
 
 public class ProgramBlock extends TranslatorBlock
 {
@@ -49,6 +52,11 @@ public class ProgramBlock extends TranslatorBlock
 		if (translator.isScoopProgram())
 		{
 			ret += "yield();\n";
+		}
+		
+		for (RenderableBlock b : translator.getLoopCodeHooks()) {
+			Block guinoBlock = b.getBlock();			
+			ret += translator.translate(guinoBlock.getBlockID());
 		}
 		
 		ret = ret + "}\n\n";

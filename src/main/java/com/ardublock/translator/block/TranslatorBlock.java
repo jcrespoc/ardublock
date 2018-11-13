@@ -12,6 +12,10 @@ abstract public class TranslatorBlock
 	
 	protected Long blockId;
 	
+	public Long getBlockId() {
+		return blockId;
+	}
+
 	private BlockAdaptor blockAdaptor;
 	
 	protected Translator translator;
@@ -21,6 +25,8 @@ abstract public class TranslatorBlock
 	
 	protected String codePrefix;
 	protected String codeSuffix;
+
+	private boolean needsInsertLoopCode;
 	
 	protected TranslatorBlock(Long blockId, Translator translator)
 	{
@@ -103,5 +109,13 @@ abstract public class TranslatorBlock
 	}
 	
 	public void onTranslateBodyFinished() throws SocketNullException, SubroutineNotDeclaredException{}
+	
+	public void setNeedsInsertLoopCode(boolean needsLoopHook) {
+		this.needsInsertLoopCode = needsLoopHook;
+	};
+
+	public boolean getNeedsInsertLoopCode() {
+		return this.needsInsertLoopCode;
+	};
 	
 }
